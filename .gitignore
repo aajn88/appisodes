@@ -30,3 +30,6 @@ Thumbs.db
 .idea
 .gradle
 build/
+
+# Secure files
+appisodes.properties

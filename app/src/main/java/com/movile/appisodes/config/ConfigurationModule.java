@@ -3,12 +3,12 @@ package com.movile.appisodes.config;
 import android.app.Application;
 
 import com.google.inject.AbstractModule;
-import com.movile.business.services.api.IFoo;
-import com.movile.business.services.impl.Foo;
-import com.movile.communication.clients.api.IFooClient;
-import com.movile.communication.clients.impl.FooClient;
-import com.movile.persistence.managers.api.IFooManager;
-import com.movile.persistence.managers.impl.FooManager;
+import com.movile.business.services.impl.SessionService;
+import com.movile.common.services.ISessionService;
+import com.movile.communication.clients.trakt.api.ITraktClient;
+import com.movile.communication.clients.trakt.impl.TraktClient;
+import com.movile.persistence.managers.api.IAccessTokenManager;
+import com.movile.persistence.managers.impl.AccessTokenManager;
 
 /**
  * This is the RoboGuice configuration class
@@ -36,21 +36,21 @@ public class ConfigurationModule extends AbstractModule {
      * This method binds the services with their interfaces
      */
     private void bindServices() {
-        bind(IFoo.class).to(Foo.class);
+        bind(ISessionService.class).to(SessionService.class);
     }
 
     /**
      * This method binds the managers with their interfaces
      */
     private void bindManagers() {
-        bind(IFooManager.class).to(FooManager.class);
+        bind(IAccessTokenManager.class).to(AccessTokenManager.class);
     }
 
     /**
      * This method binds other components and classes, such as clients
      */
     private void bindOthers() {
-        bind(IFooClient.class).to(FooClient.class);
+        bind(ITraktClient.class).to(TraktClient.class);
     }
 
 }

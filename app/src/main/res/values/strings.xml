@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Appisodes</string>
+
+    <!-- Login Strings -->
+    <string name="sign_in_methods">Sign in using the following:</string>
+    <string name="trakt">Trakt.tv</string>
+    <string name="copy_code">Copy the following code</string>
+    <string name="authenticate_trakt">And authenticate in Trakt.tv</string>
+    <string name="authenticate">Go Trakt.tv</string>
+
 </resources>

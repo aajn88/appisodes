@@ -1,18 +1,28 @@
-package com.movile.appisodes;
+package com.movile.appisodes.controllers.common;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.movile.appisodes.R;
+import com.movile.appisodes.controllers.login.LoginActivity;
 import com.movile.appisodes.utils.AnimationUtils;
 
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
+/**
+ * This is the main activity where the slpash screen is displayed and where the decision to go to
+ * login or to home screen is taken
+ *
+ * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
+ */
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActionBarActivity {
 
@@ -35,7 +45,7 @@ public class MainActivity extends RoboActionBarActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                goHome();
+                goLogin();
             }
         }, SPLASH_DELAY);
 
@@ -44,8 +54,12 @@ public class MainActivity extends RoboActionBarActivity {
     /**
      * This method redirects to HomeActivity
      */
-    private void goHome() {
-        // TODO: Go home
+    private void goLogin() {
+        Intent loginIntent = new Intent(this, LoginActivity.class);
+        ActivityOptionsCompat options = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(this, mAppisodesIv,
+                        getString(R.string.transition_body));
+        startActivity(loginIntent, options.toBundle());
     }
 
     /**

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Transitions Strings -->
+    <string name="transition_body">transition_body</string>
+    <string name="transition_text">transition_text</string>
+    <string name="transition_event">transition_event</string>
+    <string name="transition_toolbar">transition_toolbar</string>
+</resources>
