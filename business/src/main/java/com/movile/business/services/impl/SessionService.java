@@ -2,6 +2,7 @@ package com.movile.business.services.impl;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -9,16 +10,21 @@ import com.movile.common.constants.Property;
 import com.movile.common.helpers.PropertiesAdminHelper;
 import com.movile.common.model.authentication.AccessToken;
 import com.movile.common.model.authentication.GeneratedCode;
+import com.movile.common.model.authentication.User;
 import com.movile.common.services.ISessionService;
-import com.movile.communication.clients.trakt.api.IAuthentication;
+import com.movile.communication.clients.trakt.api.IAuthenticationApi;
 import com.movile.communication.clients.trakt.api.ITraktClient;
+import com.movile.communication.clients.trakt.api.IUserApi;
 import com.movile.communication.clients.trakt.model.GenerateCodeRequest;
 import com.movile.communication.clients.trakt.model.GetTokenRequest;
-import com.movile.persistence.managers.api.IAccessTokenManager;
+import com.movile.communication.clients.trakt.model.GetUserSettingsResponse;
+import com.movile.persistence.managers.api.IUsersManager;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import retrofit2.Call;
 import retrofit2.Response;
 
 /**
@@ -28,6 +34,9 @@ import retrofit2.Response;
  */
 @Singleton
 public class SessionService implements ISessionService {
+
+    /** Tag for logs **/
+    private static final String TAG_LOG = SessionService.class.getName();
 
     /** Token success **/
     private static final int TOKEN_SUCCESS = 200;
@@ -48,16 +57,22 @@ public class SessionService implements ISessionService {
     @Inject
     private ITraktClient mTraktClient;
 
-    /** Access Token Manager **/
+    /** Users Manager **/
     @Inject
-    private IAccessTokenManager mAccessTokenManager;
+    private IUsersManager mUsersManager;
 
     /** Properties admin **/
     @Inject
     private PropertiesAdminHelper mPropertiesHelper;
 
     /** This is the current session (in memory) **/
-    private AccessToken mCurrentSession;
+    private User mCurrentSession;
+
+    /** This is the current access token (in memory) **/
+    private AccessToken mCurrentToken;
+
+    /** This flag will be use to stop the authentication if the user cancels the process **/
+    private boolean mStopAuthentication;
 
     /**
      * This method performs the authentication process. A callback will be called when the
@@ -75,7 +90,7 @@ public class SessionService implements ISessionService {
     @Override
     public synchronized GeneratedCode doAuthentication(
             final IAuthenticationResultCallback callback) throws IllegalArgumentException {
-        final IAuthentication authenticationApi = mTraktClient.getApi(IAuthentication.class);
+        final IAuthenticationApi authenticationApi = mTraktClient.getApi(IAuthenticationApi.class);
         GenerateCodeRequest request = new GenerateCodeRequest();
 
         request.setClientId(mPropertiesHelper.getProperty(Property.CLIENT_ID));
@@ -97,6 +112,8 @@ public class SessionService implements ISessionService {
         getTokenRequest.setClientSecret(mPropertiesHelper.getProperty(Property.CLIENT_SECRET));
         getTokenRequest.setDeviceCode(generatedCode.getDeviceCode());
 
+        mStopAuthentication = false;
+
         HandlerThread thread = new HandlerThread(SessionService.class.getName());
         thread.start();
         final Handler pollHandler = new Handler(thread.getLooper());
@@ -104,8 +121,11 @@ public class SessionService implements ISessionService {
             @Override
             public void run() {
                 Calendar now = Calendar.getInstance();
-                if (now.getTimeInMillis() - start > limitMillis) {
-                    callback.onFailure();
+                if (mStopAuthentication || now.getTimeInMillis() - start > limitMillis) {
+                    if(!mStopAuthentication) {
+                        Log.i(TAG_LOG, "Authentication process was canceled");
+                        callback.onFailure();
+                    }
                     return;
                 }
                 Response<AccessToken> tokenResponse = mTraktClient
@@ -117,13 +137,16 @@ public class SessionService implements ISessionService {
                     case TOKEN_ALREADY_USED:
                         AccessToken accessToken = tokenResponse.body();
                         persistSession(accessToken);
+                        Log.i(TAG_LOG, "Authentication process succeeded");
                         callback.onSuccess();
                         return;
                     case TOKEN_TIME_EXPIRED:
                     case TOKEN_NOT_FOUND:
+                        Log.i(TAG_LOG, "Authentication process failed");
                         callback.onFailure();
                         return;
                     case TOKEN_DENIED:
+                        Log.i(TAG_LOG, "Authentication process was denied");
                         callback.onNotAuthorized();
                         return;
                 }
@@ -136,6 +159,14 @@ public class SessionService implements ISessionService {
     }
 
     /**
+     * This method stops the authentication process if the user cancels the process
+     */
+    @Override
+    public void stopAuthentication() {
+        mStopAuthentication = true;
+    }
+
+    /**
      * This method returns the current active session (if exists). If there is no active session,
      * then null is returned
      *
@@ -143,14 +174,30 @@ public class SessionService implements ISessionService {
      * session
      */
     @Override
-    public AccessToken getCurrentSession() {
+    public User getCurrentSession() {
         if (mCurrentSession == null) {
-            List<AccessToken> tokens = mAccessTokenManager.all();
-            if (tokens != null && !tokens.isEmpty()) {
-                mCurrentSession = tokens.get(0);
+            List<User> users = mUsersManager.all();
+            if (users != null && !users.isEmpty()) {
+                mCurrentSession = users.get(0);
             }
         }
         return mCurrentSession;
+    }
+
+    /**
+     * This method returns the access token
+     *
+     * @return The access token
+     */
+    @Override
+    public AccessToken getAccessToken() {
+        if(mCurrentToken == null) {
+            User user = getCurrentSession();
+            if(user != null) {
+                mCurrentToken = user.getAccessToken();
+            }
+        }
+        return mCurrentToken;
     }
 
     /**
@@ -160,8 +207,17 @@ public class SessionService implements ISessionService {
      *         Access token to be stored
      */
     private void persistSession(AccessToken accessToken) {
-        mAccessTokenManager.deleteAll();
-        mAccessTokenManager.createOrUpdate(accessToken);
-        mCurrentSession = accessToken;
+        accessToken.setManagementDate(new Date());
+        mCurrentToken = accessToken;
+
+        IUserApi userApi = mTraktClient.getApi(IUserApi.class);
+        Call<GetUserSettingsResponse> call = userApi.getUserSettings();
+        Response<GetUserSettingsResponse> response = mTraktClient.execute(call);
+        mCurrentSession = response.body().getUser();
+        mCurrentSession.setAccessToken(accessToken);
+        mCurrentSession.setAvatarUrl(mCurrentSession.getImages().get(User.AVATAR).getFull());
+
+        mUsersManager.deleteAll();
+        mUsersManager.createOrUpdate(mCurrentSession);
     }
 }

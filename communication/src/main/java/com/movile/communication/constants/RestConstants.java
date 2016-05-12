@@ -13,6 +13,15 @@ public final class RestConstants {
     /** Content type header **/
     public static final String CONTENT_TYPE = "Content-Type";
 
+    /** Trakt.tv API version **/
+    public static final String TRAKT_API_VERSION = "trakt-api-version";
+
+    /** Trakt.tv API key **/
+    public static final String TRAKT_API_KEY = "trakt-api-key";
+
+    /** Authorization header **/
+    public static final String AUTHORIZATION = "Authorization";
+
     /** Application / Json **/
     public static final String APPLICATION_JSON = "application/json";
 

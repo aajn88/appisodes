@@ -9,11 +9,13 @@ import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.movile.communication.BuildConfig;
-import com.movile.communication.clients.trakt.HeaderInterceptor;
 import com.movile.communication.clients.trakt.api.ITraktClient;
+import com.movile.communication.clients.trakt.interceptors.HeaderInterceptor;
 
 import java.io.IOException;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -54,10 +56,23 @@ public class TraktClient implements ITraktClient {
             Gson gson = new GsonBuilder()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
             mRetrofit = new Retrofit.Builder().baseUrl(BuildConfig.SERVER_URL)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .client(HeaderInterceptor.getClient(mContext)).build();
+                    .addConverterFactory(GsonConverterFactory.create(gson)).client(getClient())
+                    .build();
             return mRetrofit.create(clazz);
         }
+    }
+
+    /**
+     * This method returns the specific client for this interceptor
+     *
+     * @return Client interceptor
+     */
+    public OkHttpClient getClient() {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        // Just for debug level
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        return new OkHttpClient.Builder().addInterceptor(new HeaderInterceptor(mContext))
+                .addInterceptor(loggingInterceptor).build();
     }
 
     /**

@@ -14,7 +14,7 @@ import retrofit2.http.POST;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public interface IAuthentication {
+public interface IAuthenticationApi {
 
     /**
      * This method generates the code for authentication

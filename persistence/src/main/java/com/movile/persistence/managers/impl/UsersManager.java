@@ -2,20 +2,19 @@ package com.movile.persistence.managers.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.movile.common.model.authentication.AccessToken;
+import com.movile.common.model.authentication.User;
 import com.movile.persistence.DatabaseHelper;
-import com.movile.persistence.managers.api.IAccessTokenManager;
+import com.movile.persistence.managers.api.IUsersManager;
 
 import java.sql.SQLException;
 
 /**
- * This is the Access Token manager implementation
+ * This is the Users manager implementation
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
 @Singleton
-public class AccessTokenManager extends CrudManager<AccessToken, Integer>
-        implements IAccessTokenManager {
+public class UsersManager extends CrudManager<User, Integer> implements IUsersManager {
 
     /**
      * This is the main constructor of the CrudManager
@@ -27,7 +26,7 @@ public class AccessTokenManager extends CrudManager<AccessToken, Integer>
      *         If there's an error creating the Entity's DAO
      */
     @Inject
-    public AccessTokenManager(DatabaseHelper helper) throws SQLException {
-        super(helper, AccessToken.class);
+    public UsersManager(DatabaseHelper helper) throws SQLException {
+        super(helper, User.class);
     }
 }

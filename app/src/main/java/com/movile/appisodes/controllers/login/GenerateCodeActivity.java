@@ -6,16 +6,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.github.johnpersano.supertoasts.SuperToast;
+import com.github.johnpersano.supertoasts.util.Style;
 import com.google.inject.Inject;
 import com.movile.appisodes.R;
+import com.movile.appisodes.controllers.common.BaseActivity;
 import com.movile.appisodes.custom_views.progress_bars.ProgressWheel;
 import com.movile.appisodes.utils.ViewUtils;
 import com.movile.common.model.authentication.GeneratedCode;
 import com.movile.common.services.ISessionService;
 
-import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
@@ -25,7 +26,7 @@ import roboguice.inject.InjectView;
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
 @ContentView(R.layout.activity_generate_code)
-public class GenerateCodeActivity extends RoboActionBarActivity
+public class GenerateCodeActivity extends BaseActivity
         implements View.OnClickListener, ISessionService.IAuthenticationResultCallback {
 
     /** Main Content LinearLayout **/
@@ -60,6 +61,12 @@ public class GenerateCodeActivity extends RoboActionBarActivity
         mGoTraktRtv.setOnClickListener(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSessionService.stopAuthentication();
+    }
+
     /**
      * Called when a view has been clicked.
      *
@@ -83,7 +90,8 @@ public class GenerateCodeActivity extends RoboActionBarActivity
      */
     @Override
     public void onSuccess() {
-        Toast.makeText(this, "Success!", Toast.LENGTH_LONG).show();
+        ViewUtils.makeToast(getActivity(), R.string.authorization_success,
+                SuperToast.Duration.EXTRA_LONG, Style.GREEN).show();
     }
 
     /**
@@ -92,7 +100,9 @@ public class GenerateCodeActivity extends RoboActionBarActivity
      */
     @Override
     public void onFailure() {
-        Toast.makeText(this, "Faliure :(", Toast.LENGTH_LONG).show();
+        ViewUtils.makeToast(getActivity(), R.string.authorization_time_out,
+                SuperToast.Duration.EXTRA_LONG, Style.ORANGE).show();
+        finish();
     }
 
     /**
@@ -100,7 +110,9 @@ public class GenerateCodeActivity extends RoboActionBarActivity
      */
     @Override
     public void onNotAuthorized() {
-        Toast.makeText(this, "Not authorized :'(", Toast.LENGTH_LONG).show();
+        ViewUtils.makeToast(getActivity(), R.string.authorization_denied,
+                SuperToast.Duration.EXTRA_LONG, Style.RED).show();
+        finish();
     }
 
     /**
@@ -135,7 +147,9 @@ public class GenerateCodeActivity extends RoboActionBarActivity
             enableProgressWheel(false);
 
             if (generatedCode == null) {
-                // TODO: Manage connection failure
+                ViewUtils.makeToast(getActivity(), R.string.no_internet_connection,
+                        SuperToast.Duration.EXTRA_LONG, Style.RED).show();
+                finish();
                 return;
             }
 

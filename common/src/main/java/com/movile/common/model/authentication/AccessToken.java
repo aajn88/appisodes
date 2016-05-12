@@ -1,9 +1,8 @@
 package com.movile.common.model.authentication;
 
 import com.google.gson.annotations.SerializedName;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -12,53 +11,29 @@ import java.util.Date;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public class AccessToken {
-
-    /** Local Id **/
-    @DatabaseField(generatedId = true)
-    private Integer id;
+public class AccessToken implements Serializable {
 
     /** Access token **/
     @SerializedName("access_token")
-    @DatabaseField(canBeNull = false)
     private String token;
 
     /** Token type **/
     @SerializedName("token_type")
-    @DatabaseField(canBeNull = false)
     private String type;
 
     /** Expires in (seconds) **/
     @SerializedName("expires_in")
-    @DatabaseField(canBeNull = false)
     private String expiresIn;
 
     /** Refresh token **/
     @SerializedName("refresh_token")
-    @DatabaseField(canBeNull = false)
     private String refreshToken;
 
     /** Token scope **/
-    @DatabaseField(canBeNull = false)
     private String scope;
 
     /** Management date. When the data was registered **/
-    @DatabaseField(dataType = DataType.DATE_LONG)
     private Date managementDate;
-
-    /**
-     * @return the id
-     */
-    public Integer getId() {
-        return id;
-    }
-
-    /**
-     * @return id the id to set
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     /**
      * @return the token

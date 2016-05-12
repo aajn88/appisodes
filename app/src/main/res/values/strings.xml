@@ -1,5 +1,7 @@
 <resources>
+    <!-- Generics -->
     <string name="app_name">Appisodes</string>
+    <string name="no_internet_connection">No internet connection</string>
 
     <!-- Login Strings -->
     <string name="sign_in_methods">Sign in using the following:</string>
@@ -7,5 +9,8 @@
     <string name="copy_code">Copy the following code</string>
     <string name="authenticate_trakt">And authenticate in Trakt.tv</string>
     <string name="authenticate">Go Trakt.tv</string>
+    <string name="authorization_time_out">You didn\'t verified Appisodes :(</string>
+    <string name="authorization_denied">You denied Appisodes :\'(</string>
+    <string name="authorization_success">Woohoo! Welcome to Appisodes!</string>
 
 </resources>

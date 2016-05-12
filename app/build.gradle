@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -40,4 +41,6 @@ dependencies {
 
     compile project(":business")
     compile project(":common")
+
+    compile 'com.github.johnpersano:supertoasts:1.3.4@aar'
 }

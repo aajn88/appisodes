@@ -7,8 +7,8 @@ import com.movile.business.services.impl.SessionService;
 import com.movile.common.services.ISessionService;
 import com.movile.communication.clients.trakt.api.ITraktClient;
 import com.movile.communication.clients.trakt.impl.TraktClient;
-import com.movile.persistence.managers.api.IAccessTokenManager;
-import com.movile.persistence.managers.impl.AccessTokenManager;
+import com.movile.persistence.managers.api.IUsersManager;
+import com.movile.persistence.managers.impl.UsersManager;
 
 /**
  * This is the RoboGuice configuration class
@@ -43,7 +43,7 @@ public class ConfigurationModule extends AbstractModule {
      * This method binds the managers with their interfaces
      */
     private void bindManagers() {
-        bind(IAccessTokenManager.class).to(AccessTokenManager.class);
+        bind(IUsersManager.class).to(UsersManager.class);
     }
 
     /**

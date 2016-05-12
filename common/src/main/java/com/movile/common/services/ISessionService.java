@@ -2,6 +2,7 @@ package com.movile.common.services;
 
 import com.movile.common.model.authentication.AccessToken;
 import com.movile.common.model.authentication.GeneratedCode;
+import com.movile.common.model.authentication.User;
 
 /**
  * This interface offers the session services such as log-in, log-out, and so on.
@@ -27,13 +28,24 @@ public interface ISessionService {
             IllegalArgumentException;
 
     /**
+     * This method stops the authentication process if the user cancels the process
+     */
+    void stopAuthentication();
+
+    /**
      * This method returns the current active session (if exists). If there is no active session,
      * then null is returned
      *
-     * @return The AccessToken owned by the current session. Returns null if there is no active
-     * session
+     * @return The User of the current session. Returns null if there is no active session
      */
-    AccessToken getCurrentSession();
+    User getCurrentSession();
+
+    /**
+     * This method returns the access token
+     *
+     * @return The access token
+     */
+    AccessToken getAccessToken();
 
     /**
      * This interface will be used for authentication results callback. The purpose of this
