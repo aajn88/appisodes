@@ -8,8 +8,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.movile.common.model.shows.Trending;
 import com.movile.communication.BuildConfig;
 import com.movile.communication.clients.trakt.api.ITraktClient;
+import com.movile.communication.clients.trakt.deserializers.MediaDeserializer;
 import com.movile.communication.clients.trakt.interceptors.HeaderInterceptor;
 
 import java.io.IOException;
@@ -54,7 +56,8 @@ public class TraktClient implements ITraktClient {
 
         synchronized (TraktClient.class) {
             Gson gson = new GsonBuilder()
-                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                    .registerTypeAdapter(Trending.class, new MediaDeserializer()).create();
             mRetrofit = new Retrofit.Builder().baseUrl(BuildConfig.SERVER_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson)).client(getClient())
                     .build();

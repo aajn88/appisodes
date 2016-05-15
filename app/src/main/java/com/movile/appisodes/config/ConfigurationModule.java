@@ -3,7 +3,9 @@ package com.movile.appisodes.config;
 import android.app.Application;
 
 import com.google.inject.AbstractModule;
+import com.movile.business.services.api.IShowsService;
 import com.movile.business.services.impl.SessionService;
+import com.movile.business.services.impl.ShowsService;
 import com.movile.common.services.ISessionService;
 import com.movile.communication.clients.trakt.api.ITraktClient;
 import com.movile.communication.clients.trakt.impl.TraktClient;
@@ -37,6 +39,7 @@ public class ConfigurationModule extends AbstractModule {
      */
     private void bindServices() {
         bind(ISessionService.class).to(SessionService.class);
+        bind(IShowsService.class).to(ShowsService.class);
     }
 
     /**

@@ -17,7 +17,7 @@
             android:name="roboguice.annotations.packages"
             android:value="com.movile.appisodes,com.movile.common,com.movile.business,com.movile.communication,com.movile.persistence"/>
 
-        <activity android:name=".controllers.common.MainActivity">
+        <activity android:name=".controllers.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -27,6 +27,8 @@
         <activity android:name=".controllers.login.LoginActivity">
         </activity>
         <activity android:name=".controllers.login.GenerateCodeActivity">
+        </activity>
+        <activity android:name=".controllers.HomeActivity">
         </activity>
     </application>
 

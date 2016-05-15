@@ -12,6 +12,7 @@ import com.github.johnpersano.supertoasts.util.Style;
 import com.google.inject.Inject;
 import com.movile.appisodes.R;
 import com.movile.appisodes.controllers.common.BaseActivity;
+import com.movile.appisodes.controllers.HomeActivity;
 import com.movile.appisodes.custom_views.progress_bars.ProgressWheel;
 import com.movile.appisodes.utils.ViewUtils;
 import com.movile.common.model.authentication.GeneratedCode;
@@ -92,6 +93,9 @@ public class GenerateCodeActivity extends BaseActivity
     public void onSuccess() {
         ViewUtils.makeToast(getActivity(), R.string.authorization_success,
                 SuperToast.Duration.EXTRA_LONG, Style.GREEN).show();
+        Intent guestIntent = new Intent(this, HomeActivity.class);
+        startActivity(guestIntent);
+        finishAffinity();
     }
 
     /**

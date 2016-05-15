@@ -10,6 +10,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
     <style name="TextViewStyle">
         <item name="android:textColor">@android:color/black</item>
     </style>
@@ -27,6 +31,16 @@
         <item name="rippleDelayClick">true</item>
         <item name="ripplePersistent">false</item>
         <item name="rippleInAdapter">false</item>
+    </style>
+
+    <style name="ImageViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:cropToPadding">true</item>
     </style>
 
 </resources>

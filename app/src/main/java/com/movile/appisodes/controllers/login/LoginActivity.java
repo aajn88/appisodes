@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.movile.appisodes.R;
+import com.movile.appisodes.controllers.HomeActivity;
 import com.movile.appisodes.utils.AnimationUtils;
 
 import roboguice.activity.RoboActionBarActivity;
@@ -32,13 +33,13 @@ public class LoginActivity extends RoboActionBarActivity implements View.OnClick
     @InjectView(R.id.signin_rtv)
     private TextView mSigninRtv;
 
-    /** Sign in MaterialRippleLayout **/
+    /** Sign in Trakt.tv MaterialRippleLayout **/
     @InjectView(R.id.signin_trakt_mrl)
-    private View mSigninMrl;
+    private View mSigninTraktMrl;
 
-    /** Sign in Trakt LinearLayout **/
-    @InjectView(R.id.signin_trakt_ll)
-    private View mSigninTraktLl;
+    /** Sign in as guest MaterialRippleLayout **/
+    @InjectView(R.id.signin_guest_mrl)
+    private View mSigninGuestMrl;
 
     /** Header LinearLayout **/
     @InjectView(R.id.header_ll)
@@ -54,7 +55,8 @@ public class LoginActivity extends RoboActionBarActivity implements View.OnClick
 
         fadeTransition();
 
-        mSigninMrl.setOnClickListener(this);
+        mSigninTraktMrl.setOnClickListener(this);
+        mSigninGuestMrl.setOnClickListener(this);
     }
 
     /**
@@ -62,21 +64,24 @@ public class LoginActivity extends RoboActionBarActivity implements View.OnClick
      */
     private void fadeTransition() {
         mSigninRtv.setAlpha(0);
-        mSigninMrl.setAlpha(0);
+        mSigninTraktMrl.setAlpha(0);
+        mSigninGuestMrl.setAlpha(0);
         mHeaderLl.setAlpha(0);
         mFooterLl.setAlpha(0);
 
         ObjectAnimator tvAnim = AnimationUtils
                 .createObjectAnimator(mSigninRtv, "alpha", 0.0F, 1.0F, ANIM_DURATION);
-        ObjectAnimator rippleAnim = AnimationUtils
-                .createObjectAnimator(mSigninMrl, "alpha", 0.0F, 1.0F, ANIM_DURATION);
+        ObjectAnimator traktAnim = AnimationUtils
+                .createObjectAnimator(mSigninTraktMrl, "alpha", 0.0F, 1.0F, ANIM_DURATION);
+        ObjectAnimator guestAnim = AnimationUtils
+                .createObjectAnimator(mSigninGuestMrl, "alpha", 0.0F, 1.0F, ANIM_DURATION);
         ObjectAnimator headerAnim = AnimationUtils
                 .createObjectAnimator(mHeaderLl, "alpha", 0.0F, 1.0F, ANIM_DURATION);
         ObjectAnimator footerAnim = AnimationUtils
                 .createObjectAnimator(mFooterLl, "alpha", 0.0F, 1.0F, ANIM_DURATION);
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(tvAnim).with(rippleAnim).with(headerAnim).with(footerAnim);
+        animatorSet.play(tvAnim).with(traktAnim).with(guestAnim).with(headerAnim).with(footerAnim);
         animatorSet.setStartDelay(DELAY_DURATION);
         animatorSet.start();
     }
@@ -98,6 +103,10 @@ public class LoginActivity extends RoboActionBarActivity implements View.OnClick
             case R.id.signin_trakt_ll:
                 Intent generateCodeIntent = new Intent(this, GenerateCodeActivity.class);
                 startActivity(generateCodeIntent);
+                break;
+            case R.id.signin_guest_ll:
+                Intent guestIntent = new Intent(this, HomeActivity.class);
+                startActivity(guestIntent);
                 break;
         }
     }

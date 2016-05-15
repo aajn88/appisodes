@@ -1,4 +1,4 @@
-package com.movile.appisodes.controllers.common;
+package com.movile.appisodes.controllers;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -9,9 +9,11 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.inject.Inject;
 import com.movile.appisodes.R;
 import com.movile.appisodes.controllers.login.LoginActivity;
 import com.movile.appisodes.utils.AnimationUtils;
+import com.movile.common.services.ISessionService;
 
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
@@ -36,6 +38,10 @@ public class MainActivity extends RoboActionBarActivity {
     @InjectView(R.id.appisodes_iv)
     private ImageView mAppisodesIv;
 
+    /** Session Service **/
+    @Inject
+    private ISessionService mSessionService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,14 +51,35 @@ public class MainActivity extends RoboActionBarActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                goLogin();
+                goTo();
             }
         }, SPLASH_DELAY);
 
     }
 
     /**
-     * This method redirects to HomeActivity
+     * This method decides where the app should be redirected. If an existing session is alive,
+     * then is redirected to HomeScreen. Otherwise will be redirected to Login page
+     */
+    private void goTo() {
+        if(mSessionService.getCurrentSession() != null) {
+            goHome();
+            return;
+        }
+
+        goLogin();
+    }
+
+    /**
+     * This method redirects to Login Activity
+     */
+    private void goHome() {
+        Intent homeIntent = new Intent(this, HomeActivity.class);
+        startActivity(homeIntent);
+    }
+
+    /**
+     * This method redirects to LoginActivity
      */
     private void goLogin() {
         Intent loginIntent = new Intent(this, LoginActivity.class);
