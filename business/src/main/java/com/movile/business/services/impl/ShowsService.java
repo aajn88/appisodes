@@ -8,6 +8,8 @@ import com.movile.common.model.shows.Show;
 import com.movile.common.model.shows.Trending;
 import com.movile.communication.clients.trakt.api.IShowsApi;
 import com.movile.communication.clients.trakt.api.ITraktClient;
+import com.movile.communication.constants.ExtendedParameter;
+import com.movile.persistence.managers.api.IShowsManager;
 
 import java.util.List;
 
@@ -34,6 +36,10 @@ public class ShowsService implements IShowsService {
     /** Total items count **/
     private static final String ITEMS_COUNT = "X-Pagination-Item-Count";
 
+    /** Shows manager **/
+    @Inject
+    private IShowsManager mShowsManager;
+
     /** Trakt Client **/
     @Inject
     private ITraktClient mTraktClient;
@@ -54,7 +60,7 @@ public class ShowsService implements IShowsService {
         Call<List<Trending<Show>>> call = showsApi.getTrending(page, limit);
         Response<List<Trending<Show>>> response = mTraktClient.execute(call);
 
-        if(response == null || !response.isSuccessful()) {
+        if (response == null || !response.isSuccessful()) {
             return null;
         }
 
@@ -66,5 +72,45 @@ public class ShowsService implements IShowsService {
         onePage.setItemsCount(Integer.parseInt(response.headers().get(ITEMS_COUNT)));
 
         return onePage;
+    }
+
+    /**
+     * This method gets the show from the server. Once server is contacted, the show is persisted in
+     * the DB. Then DB record is returned
+     *
+     * @param id
+     *         Trakt id of the show
+     *
+     * @return The show. Returns null if an error occurs
+     */
+    @Override
+    public Show getShow(int id) {
+        Show show = mShowsManager.findById(id);
+        if (show != null) {
+            return show;
+        }
+
+        IShowsApi showsApi = mTraktClient.getApi(IShowsApi.class);
+        Response<Show> fullResponse = mTraktClient
+                .execute(showsApi.getShow(id, ExtendedParameter.FULL));
+
+        if (fullResponse == null || !fullResponse.isSuccessful() ||
+                (show = fullResponse.body()) == null) {
+            return null;
+        }
+
+        Response<Show> imagesResponse = mTraktClient
+                .execute(showsApi.getShow(id, ExtendedParameter.IMAGES));
+
+        if (imagesResponse == null || !imagesResponse.isSuccessful() ||
+                imagesResponse.body() == null) {
+            return show;
+        }
+
+        show.setImages(imagesResponse.body().getImages());
+        show.setLocalId(show.getIds().getTrakt());
+
+        mShowsManager.createOrUpdate(show);
+        return show;
     }
 }

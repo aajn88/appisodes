@@ -62,6 +62,8 @@ public class MediaDeserializer implements JsonDeserializer<Trending> {
 
         if (property != null) {
             JsonElement data = jsonObject.get(property);
+            JsonObject jo = data.getAsJsonObject();
+            jo.add(StandardMedia.LOCAL_ID, jo.get("ids").getAsJsonObject().get("trakt"));
             trending.setMedia((StandardMedia) context.deserialize(data, clazz));
         }
 

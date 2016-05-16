@@ -16,6 +16,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 import com.movile.common.model.authentication.User;
+import com.movile.common.model.shows.Show;
 
 import java.sql.SQLException;
 
@@ -34,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "appisodes.db";
 
     /** DB version **/
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
 
     /** Connection source **/
     protected AndroidConnectionSource mConnectionSource = new AndroidConnectionSource(this);
@@ -110,6 +111,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             Log.i(TAG_LOG, "DB onCreate");
             TableUtils.createTable(mConnectionSource, User.class);
+            TableUtils.createTable(mConnectionSource, Show.class);
 
             Log.i(TAG_LOG, "DB created");
         } catch (SQLException e) {
@@ -136,6 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.i(DatabaseHelper.class.getName(), "onUpgrade called");
 
             TableUtils.dropTable(mConnectionSource, User.class, true);
+            TableUtils.dropTable(mConnectionSource, Show.class, true);
 
             onCreate();
         } catch (SQLException e) {

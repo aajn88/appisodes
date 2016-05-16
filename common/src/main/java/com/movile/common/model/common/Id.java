@@ -1,12 +1,14 @@
 package com.movile.common.model.common;
 
+import java.io.Serializable;
+
 /**
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public class Id {
+public class Id implements Serializable {
 
     /** Trakt ID **/
-    private String trakt;
+    private Integer trakt;
 
     /** Slug ID **/
     private String slug;
@@ -26,14 +28,14 @@ public class Id {
     /**
      * @return the trakt
      */
-    public String getTrakt() {
+    public Integer getTrakt() {
         return trakt;
     }
 
     /**
      * @return trakt the trakt to set
      */
-    public void setTrakt(String trakt) {
+    public void setTrakt(Integer trakt) {
         this.trakt = trakt;
     }
 

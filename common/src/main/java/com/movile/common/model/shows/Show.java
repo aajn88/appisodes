@@ -10,6 +10,6 @@ import com.movile.common.model.common.StandardMedia;
 public class Show extends StandardMedia {
 
     // TODO: Here comes the other show attributes such as certification, network, etc. Just for
-    // this exercise I just selected a few. In this case the StandardMedia attributes
+    // this exercise I just selected a few. In this case the StandardMedia attributes, only.
 
 }

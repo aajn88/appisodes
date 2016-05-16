@@ -24,4 +24,15 @@ public interface IShowsService {
      */
     Pagination<Trending<Show>> getTrending(int page, int limit);
 
+    /**
+     * This method gets the show from the server. Once server is contacted, the show is persisted in
+     * the DB. Then DB record is returned
+     *
+     * @param id
+     *         Trakt id of the show
+     *
+     * @return The show. Returns null if an error occurs
+     */
+    Show getShow(int id);
+
 }

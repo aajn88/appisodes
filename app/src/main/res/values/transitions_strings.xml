@@ -5,4 +5,5 @@
     <string name="transition_text">transition_text</string>
     <string name="transition_event">transition_event</string>
     <string name="transition_toolbar">transition_toolbar</string>
+    <string name="transition_view">transition_view</string>
 </resources>

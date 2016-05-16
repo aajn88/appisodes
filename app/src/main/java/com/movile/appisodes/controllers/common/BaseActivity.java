@@ -63,6 +63,11 @@ public class BaseActivity extends RoboActionBarActivity
     @Nullable
     protected Toolbar mToolbar;
 
+    /** Toolbar **/
+    @InjectView(R.id.toolbar_title_rtv)
+    @Nullable
+    protected TextView mToolbarTitleRtv;
+
     /** Drawer List **/
     protected ActionBarDrawerToggle mDrawerToggle;
 
@@ -82,6 +87,20 @@ public class BaseActivity extends RoboActionBarActivity
         initToolbar();
         initDrawer();
 
+    }
+
+    @Override
+    public void setTitle(int titleId) {
+        setTitle(getString(titleId));
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        if(mToolbarTitleRtv == null) {
+            return;
+        }
+
+        mToolbarTitleRtv.setText(title);
     }
 
     /**
@@ -213,6 +232,7 @@ public class BaseActivity extends RoboActionBarActivity
         switch (item.getItemId()) {
             case R.id.home_item:
                 fragment = TrendingFragment.newInstance();
+                setTitle(R.string.trending);
                 break;
         }
 

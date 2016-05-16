@@ -9,13 +9,15 @@
     android:transitionName="@string/transition_toolbar"
     app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    <ImageView
-        android:id="@+id/apmospheric_logo_iv"
-        android:layout_width="?attr/actionBarSize"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_gravity="center"
-        android:src="@mipmap/ic_launcher"
-        android:transitionName="@string/transition_body"/>
+    <com.movile.appisodes.custom_views.font.RobotoTextView
+        android:id="@+id/toolbar_title_rtv"
+        style="@style/TitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|center_vertical"
+        android:gravity="center"
+        android:text="Toolbar title"
+        android:textColor="@color/white"/>
 
     <com.movile.appisodes.custom_views.common.MaterialRippleLayout
         style="@style/RippleStyle"
