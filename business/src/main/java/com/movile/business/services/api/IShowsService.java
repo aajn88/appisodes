@@ -1,8 +1,11 @@
 package com.movile.business.services.api;
 
 import com.movile.common.model.common.Pagination;
+import com.movile.common.model.shows.Season;
 import com.movile.common.model.shows.Show;
 import com.movile.common.model.shows.Trending;
+
+import java.util.List;
 
 /**
  * This is the interface that exposes the shows services such as the trending shows or specific
@@ -34,5 +37,16 @@ public interface IShowsService {
      * @return The show. Returns null if an error occurs
      */
     Show getShow(int id);
+
+    /**
+     * This method gets the season from the server. If exists an error contacting the server, then
+     * DB info is returned. If no solution exists, then returns null
+     *
+     * @param showId
+     *         Show id
+     *
+     * @return List of seasons. Returns null if an error occurs
+     */
+    List<Season> getSeasons(int showId);
 
 }

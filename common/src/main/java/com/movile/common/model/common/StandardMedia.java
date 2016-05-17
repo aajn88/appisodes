@@ -24,11 +24,11 @@ public class StandardMedia {
     protected Id ids;
 
     /** Show title **/
-    @DatabaseField(canBeNull = false)
+    @DatabaseField
     protected String title;
 
     /** Show year **/
-    @DatabaseField(canBeNull = false)
+    @DatabaseField
     protected Integer year;
 
     /** Media overview **/

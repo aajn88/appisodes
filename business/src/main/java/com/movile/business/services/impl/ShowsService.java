@@ -4,11 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.movile.business.services.api.IShowsService;
 import com.movile.common.model.common.Pagination;
+import com.movile.common.model.shows.Season;
 import com.movile.common.model.shows.Show;
 import com.movile.common.model.shows.Trending;
-import com.movile.communication.clients.trakt.api.IShowsApi;
 import com.movile.communication.clients.trakt.api.ITraktClient;
+import com.movile.communication.clients.trakt.api.shows.IShowsApi;
 import com.movile.communication.constants.ExtendedParameter;
+import com.movile.persistence.managers.api.ISeasonsManager;
 import com.movile.persistence.managers.api.IShowsManager;
 
 import java.util.List;
@@ -36,9 +38,16 @@ public class ShowsService implements IShowsService {
     /** Total items count **/
     private static final String ITEMS_COUNT = "X-Pagination-Item-Count";
 
+    /** Shows API. This variable should not be accessed directly. **/
+    private IShowsApi mShowsApi;
+
     /** Shows manager **/
     @Inject
     private IShowsManager mShowsManager;
+
+    /** Seasons manager **/
+    @Inject
+    private ISeasonsManager mSeasonsManager;
 
     /** Trakt Client **/
     @Inject
@@ -56,7 +65,7 @@ public class ShowsService implements IShowsService {
      */
     @Override
     public Pagination<Trending<Show>> getTrending(int page, int limit) {
-        IShowsApi showsApi = mTraktClient.getApi(IShowsApi.class);
+        IShowsApi showsApi = getShowsApi();
         Call<List<Trending<Show>>> call = showsApi.getTrending(page, limit);
         Response<List<Trending<Show>>> response = mTraktClient.execute(call);
 
@@ -90,7 +99,7 @@ public class ShowsService implements IShowsService {
             return show;
         }
 
-        IShowsApi showsApi = mTraktClient.getApi(IShowsApi.class);
+        IShowsApi showsApi = getShowsApi();
         Response<Show> fullResponse = mTraktClient
                 .execute(showsApi.getShow(id, ExtendedParameter.FULL));
 
@@ -112,5 +121,56 @@ public class ShowsService implements IShowsService {
 
         mShowsManager.createOrUpdate(show);
         return show;
+    }
+
+    /**
+     * This method gets the season from the server. If exists an error contacting the server, then
+     * DB info is returned. If no solution exists, then returns null
+     *
+     * @param showId
+     *         Show id
+     *
+     * @return List of seasons. Returns null if an error occurs
+     */
+    @Override
+    public List<Season> getSeasons(int showId) {
+        IShowsApi showsApi = getShowsApi();
+
+        Response<List<Season>> response = mTraktClient
+                .execute(showsApi.getSeasons(showId, ExtendedParameter.FULL));
+        if (response == null || !response.isSuccessful()) {
+            return mSeasonsManager.getSeasonsByShowId(showId);
+        }
+        List<Season> seasons = response.body();
+        for (Season season : seasons) {
+            season.setLocalId(season.getIds().getTrakt());
+            season.setShowId(showId);
+        }
+        Response<List<Season>> imagesResponse = mTraktClient
+                .execute(showsApi.getSeasons(showId, ExtendedParameter.IMAGES));
+        if(imagesResponse == null || !imagesResponse.isSuccessful()) {
+            return mSeasonsManager.getSeasonsByShowId(showId);
+        }
+
+        List<Season> images = imagesResponse.body();
+        for (int i = 0; i < seasons.size(); i++) {
+            Season season = seasons.get(i);
+            season.setImages(images.get(i).getImages());
+            mSeasonsManager.createOrUpdate(season);
+        }
+
+        return seasons;
+    }
+
+    /**
+     * This method gets the shows API
+     *
+     * @return The shows API
+     */
+    private IShowsApi getShowsApi() {
+        if (mShowsApi == null) {
+            mShowsApi = mTraktClient.getApi(IShowsApi.class);
+        }
+        return mShowsApi;
     }
 }

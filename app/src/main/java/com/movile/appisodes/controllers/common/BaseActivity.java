@@ -89,29 +89,15 @@ public class BaseActivity extends RoboActionBarActivity
 
     }
 
-    @Override
-    public void setTitle(int titleId) {
-        setTitle(getString(titleId));
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-        if(mToolbarTitleRtv == null) {
-            return;
-        }
-
-        mToolbarTitleRtv.setText(title);
-    }
-
     /**
      * This method inits the toolbar
      */
-    private void initToolbar() {
+    protected void initToolbar() {
         if (mToolbar == null) {
             return;
         }
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         ViewCompat.setElevation(mToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
 

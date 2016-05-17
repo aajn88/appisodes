@@ -1,11 +1,14 @@
 package com.movile.appisodes.controllers.common.menu;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.github.johnpersano.supertoasts.util.Style;
@@ -13,6 +16,7 @@ import com.google.inject.Inject;
 import com.movile.appisodes.R;
 import com.movile.appisodes.controllers.common.adapters.EndlessScrollListener;
 import com.movile.appisodes.controllers.common.adapters.MediaAdapter;
+import com.movile.appisodes.controllers.shows.ShowDetailActivity;
 import com.movile.appisodes.custom_views.progress_bars.ProgressWheel;
 import com.movile.appisodes.utils.AnimationUtils;
 import com.movile.appisodes.utils.ViewUtils;
@@ -36,7 +40,7 @@ import roboguice.inject.InjectView;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public class TrendingFragment extends RoboFragment {
+public class TrendingFragment extends RoboFragment implements AdapterView.OnItemClickListener {
 
     /** Default items per page **/
     private static final int DEFAULT_LIMIT = 20;
@@ -99,6 +103,8 @@ public class TrendingFragment extends RoboFragment {
             }
         });
 
+        mMediasContainer.setOnItemClickListener(this);
+
         new LoadTrendingAsyncTask().execute();
     }
 
@@ -110,6 +116,41 @@ public class TrendingFragment extends RoboFragment {
      */
     private void enableProgressWheel(boolean enable) {
         ViewUtils.enableProgressWheel(mProgressWheel, enable, mMediasContainer);
+    }
+
+    /**
+     * Callback method to be invoked when an item in this AdapterView has been clicked.
+     * <p/>
+     * Implementers can call getItemAtPosition(position) if they need to access the data associated
+     * with the selected item.
+     *
+     * @param parent
+     *         The AdapterView where the click happened.
+     * @param view
+     *         The view within the AdapterView that was clicked (this will be a view provided by the
+     *         adapter)
+     * @param position
+     *         The position of the view in the adapter.
+     * @param id
+     *         The row id of the item that was clicked.
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        StandardMedia selected = (StandardMedia) mMediasContainer.getItemAtPosition(position);
+
+        Class<? extends Activity> target = null;
+        Bundle extras = new Bundle();
+        if(selected instanceof Show) {
+            target = ShowDetailActivity.class;
+            extras.putInt(ShowDetailActivity.SHOW_ID, selected.getLocalId());
+        }
+        if(target == null) {
+            return;
+        }
+
+        Intent detailIntent = new Intent(getActivity(), target);
+        detailIntent.putExtras(extras);
+        startActivity(detailIntent);
     }
 
     /**

@@ -18,9 +18,9 @@
     </style>
 
     <style name="ProgressBarStyle.Main" parent="@style/ProgressBarStyle">
-        <item name="barColor">@color/material_lime_600</item>
-        <item name="circleColor">@color/material_lime_200</item>
-        <item name="rimColor">@color/material_lime_300</item>
+        <item name="barColor">@color/material_red_600</item>
+        <item name="circleColor">@color/material_red_200</item>
+        <item name="rimColor">@color/material_red_300</item>
     </style>
 
 </resources>

@@ -9,8 +9,10 @@ import com.movile.business.services.impl.ShowsService;
 import com.movile.common.services.ISessionService;
 import com.movile.communication.clients.trakt.api.ITraktClient;
 import com.movile.communication.clients.trakt.impl.TraktClient;
+import com.movile.persistence.managers.api.ISeasonsManager;
 import com.movile.persistence.managers.api.IShowsManager;
 import com.movile.persistence.managers.api.IUsersManager;
+import com.movile.persistence.managers.impl.SeasonsManager;
 import com.movile.persistence.managers.impl.ShowsManager;
 import com.movile.persistence.managers.impl.UsersManager;
 
@@ -50,6 +52,7 @@ public class ConfigurationModule extends AbstractModule {
     private void bindManagers() {
         bind(IUsersManager.class).to(UsersManager.class);
         bind(IShowsManager.class).to(ShowsManager.class);
+        bind(ISeasonsManager.class).to(SeasonsManager.class);
     }
 
     /**
