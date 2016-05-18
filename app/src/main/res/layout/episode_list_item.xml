@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/episode_container_rl"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="horizontal">
+
+
+    <ImageView
+        android:id="@+id/media_image_siv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:src="@drawable/episode_number"
+        android:transitionName="@string/transition_view"/>
+
+    <com.movile.appisodes.custom_views.font.RobotoTextView
+        android:id="@+id/episode_number_rtv"
+        style="@style/TitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/media_image_siv"
+        android:layout_alignLeft="@id/media_image_siv"
+        android:layout_alignRight="@id/media_image_siv"
+        android:layout_alignTop="@id/media_image_siv"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="@color/white"/>
+
+    <com.movile.appisodes.custom_views.font.RobotoTextView
+        android:id="@+id/episode_title_rtv"
+        style="@style/TitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/favorite_icon_tv"
+        android:alpha="0.87"
+        android:singleLine="true"
+        android:text="Media title"
+        android:transitionName="@string/transition_text"/>
+
+    <com.movile.appisodes.custom_views.font.MaterialDesignIconsTextView
+        android:id="@+id/favorite_icon_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/material_icon_star_outline"
+        android:textSize="24dp"/>
+
+</RelativeLayout>

@@ -2,6 +2,7 @@ package com.movile.appisodes.controllers.common.adapters;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,9 @@ import com.movile.common.model.shows.Show;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import roboguice.RoboGuice;
 import roboguice.inject.RoboInjector;
@@ -32,7 +35,7 @@ import roboguice.inject.RoboInjector;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public class MediaAdapter extends ArrayAdapter<StandardMedia> {
+public class MediaAdapter extends ArrayAdapter<StandardMedia> implements View.OnClickListener {
 
     /** Tag for Logs **/
     private static final String TAG_LOG = MediaAdapter.class.getName();
@@ -49,6 +52,9 @@ public class MediaAdapter extends ArrayAdapter<StandardMedia> {
 
     /** Large Screen **/
     private boolean mIsLargeScreen;
+
+    /** Selected positions **/
+    private Set<Integer> mSelectedPositions = new HashSet<>();
 
     /**
      * Constructor
@@ -113,6 +119,7 @@ public class MediaAdapter extends ArrayAdapter<StandardMedia> {
             holder.image = (ImageView) convertView.findViewById(R.id.media_image_siv);
             holder.title = (TextView) convertView.findViewById(R.id.media_title_rtv);
             holder.caption = (TextView) convertView.findViewById(R.id.media_caption_rtv);
+            holder.favorite = (TextView) convertView.findViewById(R.id.favorite_icon_tv);
 
             convertView.setTag(holder);
         } else {
@@ -122,12 +129,61 @@ public class MediaAdapter extends ArrayAdapter<StandardMedia> {
         StandardMedia media = getItem(position);
 
         holder.title.setText(media.getTitle());
-        holder.image.setImageResource(R.drawable.default_image);
+        holder.image.setImageResource(R.drawable.serie_thumbnail_placeholder);
         holder.caption.setText(null);
+        if (holder.favorite != null) {
+            checkStar(mSelectedPositions.contains(position), holder.favorite);
+            holder.favorite.setOnClickListener(this);
+            holder.favorite.setTag(position);
+        }
         new AdditionalInformationAsyncTask(holder, parent, position)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, media.getLocalId());
 
         return convertView;
+    }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v
+     *         The view that was clicked.
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.favorite_icon_tv:
+                int position = (int) v.getTag();
+                boolean isChecked = mSelectedPositions.contains(position);
+                if (!isChecked) {
+                    mSelectedPositions.add(position);
+                } else {
+                    mSelectedPositions.remove(position);
+                }
+                isChecked = !isChecked;
+                TextView icon = (TextView) v;
+                checkStar(isChecked, icon);
+                break;
+        }
+    }
+
+    /**
+     * This method checks the star given the icon
+     *
+     * @param check
+     *         Check or not?
+     * @param icon
+     *         Icon to be checked
+     */
+    private void checkStar(boolean check, TextView icon) {
+        icon.setText(check ? R.string.material_icon_star : R.string.material_icon_star_outline);
+        int colorId = check ? R.color.material_yellow_500 : R.color.black;
+        int colorRes;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            colorRes = getContext().getColor(colorId);
+        } else {
+            colorRes = getContext().getResources().getColor(colorId);
+        }
+        icon.setTextColor(colorRes);
     }
 
     /**
@@ -142,6 +198,9 @@ public class MediaAdapter extends ArrayAdapter<StandardMedia> {
 
         /** Media caption **/
         TextView caption;
+
+        /** Favorite media **/
+        TextView favorite;
     }
 
     private class AdditionalInformationAsyncTask extends AsyncTask<Integer, Void, Show> {

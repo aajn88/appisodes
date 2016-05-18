@@ -1,5 +1,6 @@
 package com.movile.communication.clients.trakt.api.shows;
 
+import com.movile.common.model.shows.Episode;
 import com.movile.common.model.shows.Season;
 import com.movile.common.model.shows.Show;
 import com.movile.common.model.shows.Trending;
@@ -60,18 +61,16 @@ public interface IShowsApi {
                                   @Query("extended") ExtendedParameter extended);
 
     /**
-     * This method requests an specific season information
+     * This method requests an specific season episodes
      *
      * @param showId
      *         Show id
      * @param seasonId
      *         Season id
-     * @param extended
-     *         Extended information
      *
-     * @return Call to seasons request
+     * @return Call to list of episodes
      */
     @GET("shows/{showId}/seasons/{seasonId}")
-    Call<Season> getSeason(@Path("showId") Integer showId, @Path("seasonId") Integer seasonId,
-                           @Query("extended") ExtendedParameter extended);
+    Call<List<Episode>> getEpisodes(@Path("showId") Integer showId,
+                                    @Path("seasonId") Integer seasonId);
 }

@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 import com.movile.appisodes.R;
 import com.movile.appisodes.controllers.common.adapters.EndlessScrollListener;
 import com.movile.appisodes.controllers.common.adapters.MediaAdapter;
-import com.movile.appisodes.controllers.shows.ShowDetailActivity;
+import com.movile.appisodes.controllers.shows.ShowSeasonsActivity;
 import com.movile.appisodes.custom_views.progress_bars.ProgressWheel;
 import com.movile.appisodes.utils.AnimationUtils;
 import com.movile.appisodes.utils.ViewUtils;
@@ -141,8 +141,8 @@ public class TrendingFragment extends RoboFragment implements AdapterView.OnItem
         Class<? extends Activity> target = null;
         Bundle extras = new Bundle();
         if(selected instanceof Show) {
-            target = ShowDetailActivity.class;
-            extras.putInt(ShowDetailActivity.SHOW_ID, selected.getLocalId());
+            target = ShowSeasonsActivity.class;
+            extras.putInt(ShowSeasonsActivity.SHOW_ID, selected.getLocalId());
         }
         if(target == null) {
             return;

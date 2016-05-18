@@ -4,12 +4,14 @@ import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 
+import java.io.Serializable;
+
 /**
  * This class represents a standard media such as movie, shows, episodes, etc.
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public class StandardMedia {
+public class StandardMedia implements Serializable {
 
     /** Local Id **/
     public static final String LOCAL_ID = "local_id";

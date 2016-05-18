@@ -8,70 +8,59 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.movile.appisodes.R;
-import com.movile.appisodes.utils.ImageUtils;
-import com.movile.common.constants.ImageType;
-import com.movile.common.model.shows.Season;
-import com.movile.common.utils.StringUtils;
+import com.movile.common.model.shows.Episode;
 
 import java.util.List;
 
 /**
- * Seasons Adapter for the RecyclerView
+ * This is the Episodes Adapter that creates the view for each item in the recycler view
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-public class SeasonsAdapter extends RecyclerView.Adapter implements View.OnClickListener {
+public class EpisodesAdapter extends RecyclerView.Adapter {
 
     /** Current context **/
     private final Context mContext;
 
-    /** Seasons data **/
-    private final List<Season> mSeasons;
-
-    /** Season msg **/
-    private final String mSeasonMsg;
-
     /** The LayoutInflater **/
     private LayoutInflater mInflater;
+
+    /** The original episodes **/
+    private List<Episode> mEpisodes;
 
     /** Last position shown **/
     private int mLastPosition = -1;
 
-    /** OnClickItemListener **/
-    private OnItemClickListener mListener;
-
     /**
-     * This is the Seasons adapter constructor
+     * Constructor for the adapter
      *
      * @param context
      *         Application context
-     * @param seasons
-     *         Seasons data
+     * @param episodes
+     *         Episodes to be shown
      */
-    public SeasonsAdapter(Context context, List<Season> seasons) {
+    public EpisodesAdapter(Context context, List<Episode> episodes) {
         this.mContext = context;
-        this.mSeasons = seasons;
+        this.mEpisodes = episodes;
         this.mInflater = LayoutInflater.from(context);
-        mSeasonMsg = context.getString(R.string.season_number);
     }
 
     /**
      * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent an
      * item.
-     * <p>
+     * <p/>
      * This new ViewHolder should be constructed with a new View that can represent the items of the
      * given type. You can either create a new View manually or inflate it from an XML layout file.
-     * <p>
+     * <p/>
      * The new ViewHolder will be used to display items of the adapter using {@link
      * #onBindViewHolder(ViewHolder, int, List)}. Since it will be re-used to display different
      * items in the data set, it is a good idea to cache references to sub views of the View to
-     * avoid unnecessary {@link View#findViewById(int)} calls.
+     * avoid unnecessary {@link android.view.View#findViewById(int)} calls.
      *
      * @param parent
      *         The ViewGroup into which the new View will be added after it is bound to an adapter
@@ -86,22 +75,22 @@ public class SeasonsAdapter extends RecyclerView.Adapter implements View.OnClick
      */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = mInflater.inflate(R.layout.media_list_item, parent, false);
-        return new SeasonHolder(v);
+        View v = mInflater.inflate(R.layout.episode_list_item, parent, false);
+        return new EpisodeHolder(v);
     }
 
     /**
      * Called by RecyclerView to display the data at the specified position. This method should
      * update the contents of the {@link ViewHolder#itemView} to reflect the item at the given
      * position.
-     * <p>
+     * <p/>
      * Note that unlike {@link ListView}, RecyclerView will not call this method again if the
      * position of the item changes in the data set unless the item itself is invalidated or the new
      * position cannot be determined. For this reason, you should only use the <code>position</code>
      * parameter while acquiring the related data item inside this method and should not keep a copy
      * of it. If you need the position of an item later on (e.g. in a click listener), use {@link
      * ViewHolder#getAdapterPosition()} which will have the updated adapter position.
-     * <p>
+     * <p/>
      * Override {@link #onBindViewHolder(ViewHolder, int, List)} instead if Adapter can handle
      * effcient partial bind.
      *
@@ -113,17 +102,13 @@ public class SeasonsAdapter extends RecyclerView.Adapter implements View.OnClick
      */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        Season season = mSeasons.get(position);
-        SeasonHolder holder = (SeasonHolder) viewHolder;
-        String imageUrl = season.getImages().getImage(ImageType.THUMB).getFull();
-        ImageUtils.displayImage(holder.mediaImage, imageUrl, null);
-        holder.mediaTitle.setText(StringUtils.format(mSeasonMsg, season.getNumber()));
-        holder.mediaCaption.setText(season.getOverview());
+        Episode episode = mEpisodes.get(position);
 
-        holder.mediaContainer.setTag(position);
-        holder.mediaContainer.setOnClickListener(this);
+        EpisodeHolder holder = (EpisodeHolder) viewHolder;
+        holder.title.setText(episode.getTitle());
+        holder.number.setText(Integer.toString(episode.getEpisode()));
 
-        setAnimation(holder.mediaContainer, position);
+        setAnimation(holder.container, position);
     }
 
     /**
@@ -141,8 +126,8 @@ public class SeasonsAdapter extends RecyclerView.Adapter implements View.OnClick
 
     @Override
     public void onViewDetachedFromWindow(ViewHolder holder) {
-        SeasonHolder seasonHolder = (SeasonHolder) holder;
-        seasonHolder.mediaContainer.clearAnimation();
+        EpisodeHolder episodeHolder = (EpisodeHolder) holder;
+        episodeHolder.container.clearAnimation();
     }
 
     /**
@@ -152,80 +137,24 @@ public class SeasonsAdapter extends RecyclerView.Adapter implements View.OnClick
      */
     @Override
     public int getItemCount() {
-        return mSeasons.size();
+        return mEpisodes.size();
     }
 
     /**
-     * Called when a view has been clicked.
-     *
-     * @param v
-     *         The view that was clicked.
+     * This is the ViewHolder for episodes
      */
-    @Override
-    public void onClick(View v) {
-        Object obj = v.getTag();
-        if (mListener == null || !(obj instanceof Integer)) {
-            return;
-        }
+    private class EpisodeHolder extends RecyclerView.ViewHolder {
 
-        mListener.onItemClick(v, (Integer) obj);
-    }
+        /** Episode Container **/
+        RelativeLayout container;
 
-    /**
-     * This method gets an item given its position
-     *
-     * @param position
-     *         Item position
-     *
-     * @return The season
-     */
-    public Season getItem(int position) {
-        return mSeasons.get(position);
-    }
+        /** Episode number **/
+        TextView number;
 
-    /**
-     * Sets the OnItemClickListener
-     *
-     * @param listener
-     *         Listener to be set
-     */
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.mListener = listener;
-    }
+        /** Episode Title **/
+        TextView title;
 
-    /**
-     * Interface to be implemented to get items click events
-     */
-    public interface OnItemClickListener {
-        /**
-         * This method is called when an item is clicked
-         *
-         * @param view
-         *         Clicked view
-         * @param position
-         *         Item position
-         */
-        void onItemClick(View view, int position);
-    }
-
-    /**
-     * This is the ViewHolder for seasons
-     */
-    private class SeasonHolder extends RecyclerView.ViewHolder {
-
-        /** Media Container **/
-        RelativeLayout mediaContainer;
-
-        /** Media Image **/
-        ImageView mediaImage;
-
-        /** Media Title **/
-        TextView mediaTitle;
-
-        /** Media Caption **/
-        TextView mediaCaption;
-
-        /** Media icon **/
+        /** Episode icon **/
         TextView mediaIcon;
 
         /**
@@ -234,13 +163,12 @@ public class SeasonsAdapter extends RecyclerView.Adapter implements View.OnClick
          * @param itemView
          *         Item view
          */
-        public SeasonHolder(View itemView) {
+        public EpisodeHolder(View itemView) {
             super(itemView);
 
-            mediaContainer = (RelativeLayout) itemView.findViewById(R.id.media_container_rl);
-            mediaImage = (ImageView) itemView.findViewById(R.id.media_image_siv);
-            mediaTitle = (TextView) itemView.findViewById(R.id.media_title_rtv);
-            mediaCaption = (TextView) itemView.findViewById(R.id.media_caption_rtv);
+            container = (RelativeLayout) itemView.findViewById(R.id.episode_container_rl);
+            number = (TextView) itemView.findViewById(R.id.episode_number_rtv);
+            title = (TextView) itemView.findViewById(R.id.episode_title_rtv);
             mediaIcon = (TextView) itemView.findViewById(R.id.favorite_icon_tv);
         }
     }

@@ -1,6 +1,7 @@
 package com.movile.business.services.api;
 
 import com.movile.common.model.common.Pagination;
+import com.movile.common.model.shows.Episode;
 import com.movile.common.model.shows.Season;
 import com.movile.common.model.shows.Show;
 import com.movile.common.model.shows.Trending;
@@ -48,5 +49,17 @@ public interface IShowsService {
      * @return List of seasons. Returns null if an error occurs
      */
     List<Season> getSeasons(int showId);
+
+    /**
+     * This method retrieves the episodes from a season of a show
+     *
+     * @param showId
+     *         Show Id
+     * @param seasonId
+     *         Season Id
+     *
+     * @return List of episodes of the given show's season
+     */
+    List<Episode> getEpisodes(int showId, int seasonId);
 
 }

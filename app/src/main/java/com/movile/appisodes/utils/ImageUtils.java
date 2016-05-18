@@ -31,10 +31,10 @@ public final class ImageUtils {
     private static final DisplayImageOptions.Builder DEFAULT_DISPLAY_IMAGE_OPTIONS_BUIDLER = new DisplayImageOptions.Builder()
             .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
             .displayer(new FadeInBitmapDisplayer(300, true, false, false))
-            .showImageForEmptyUri(R.drawable.default_image)
-            .showImageOnLoading(R.drawable.default_image).considerExifParams(true)
-            .showImageOnFail(R.drawable.default_image).cacheOnDisk(true).cacheInMemory(true)
-            .bitmapConfig(Config.ARGB_8888);
+            .showImageForEmptyUri(R.drawable.season_background_placeholder)
+            .showImageOnLoading(R.drawable.season_background_placeholder).considerExifParams(true)
+            .showImageOnFail(R.drawable.season_background_placeholder).cacheOnDisk(true)
+            .cacheInMemory(true).bitmapConfig(Config.ARGB_8888);
 
     /** Default display image options **/
     private static final DisplayImageOptions DEFAULT_DISPLAY_IMAGE_OPTIONS = DEFAULT_DISPLAY_IMAGE_OPTIONS_BUIDLER

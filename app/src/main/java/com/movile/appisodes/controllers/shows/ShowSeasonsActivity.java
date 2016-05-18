@@ -1,5 +1,6 @@
 package com.movile.appisodes.controllers.shows;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -32,12 +33,12 @@ import roboguice.inject.InjectView;
  *
  * @author <a href="mailto:aajn88@gmail.com">Antonio Jimenez</a>
  */
-@ContentView(R.layout.activity_show_detail)
-public class ShowDetailActivity extends BaseNoDrawerActivity
+@ContentView(R.layout.activity_show_seasons)
+public class ShowSeasonsActivity extends BaseNoDrawerActivity
         implements View.OnClickListener, SeasonsAdapter.OnItemClickListener {
 
     /** Tag for logs **/
-    public static final String TAG_LOG = ShowDetailActivity.class.getName();
+    public static final String TAG_LOG = ShowSeasonsActivity.class.getName();
 
     /** Show Id key **/
     public static final String SHOW_ID = "SHOW_ID";
@@ -132,6 +133,9 @@ public class ShowDetailActivity extends BaseNoDrawerActivity
     @Override
     public void onItemClick(View view, int position) {
         Season season = mAdapter.getItem(position);
+        Intent episodesIntent = new Intent(this, EpisodesSeasonActivity.class);
+        episodesIntent.putExtra(EpisodesSeasonActivity.SELECTED_SEASON, season);
+        startActivity(episodesIntent);
     }
 
     /**
@@ -159,11 +163,12 @@ public class ShowDetailActivity extends BaseNoDrawerActivity
             if (mSeasons == null) {
                 ViewUtils.makeToast(getActivity(), R.string.no_internet_connection,
                         SuperToast.Duration.EXTRA_LONG, Style.RED).show();
+                finish();
                 return;
             }
 
             mAdapter = new SeasonsAdapter(getActivity(), mSeasons);
-            mAdapter.setOnItemClickListener(ShowDetailActivity.this);
+            mAdapter.setOnItemClickListener(ShowSeasonsActivity.this);
             mSeasonsRv.setAdapter(mAdapter);
         }
 

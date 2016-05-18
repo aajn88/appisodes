@@ -97,7 +97,6 @@ public class BaseActivity extends RoboActionBarActivity
             return;
         }
         setSupportActionBar(mToolbar);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         ViewCompat.setElevation(mToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
 

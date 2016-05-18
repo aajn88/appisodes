@@ -30,7 +30,9 @@
         </activity>
         <activity android:name=".controllers.HomeActivity">
         </activity>
-        <activity android:name=".controllers.shows.ShowDetailActivity">
+        <activity android:name=".controllers.shows.ShowSeasonsActivity">
+        </activity>
+        <activity android:name=".controllers.shows.EpisodesSeasonActivity">
         </activity>
     </application>
 

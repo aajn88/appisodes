@@ -4,12 +4,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.movile.business.services.api.IShowsService;
 import com.movile.common.model.common.Pagination;
+import com.movile.common.model.shows.Episode;
 import com.movile.common.model.shows.Season;
 import com.movile.common.model.shows.Show;
 import com.movile.common.model.shows.Trending;
 import com.movile.communication.clients.trakt.api.ITraktClient;
 import com.movile.communication.clients.trakt.api.shows.IShowsApi;
 import com.movile.communication.constants.ExtendedParameter;
+import com.movile.persistence.managers.api.IEpisodesManager;
 import com.movile.persistence.managers.api.ISeasonsManager;
 import com.movile.persistence.managers.api.IShowsManager;
 
@@ -48,6 +50,10 @@ public class ShowsService implements IShowsService {
     /** Seasons manager **/
     @Inject
     private ISeasonsManager mSeasonsManager;
+
+    /** Episodes manager **/
+    @Inject
+    private IEpisodesManager mEpisodesManager;
 
     /** Trakt Client **/
     @Inject
@@ -139,7 +145,8 @@ public class ShowsService implements IShowsService {
         Response<List<Season>> response = mTraktClient
                 .execute(showsApi.getSeasons(showId, ExtendedParameter.FULL));
         if (response == null || !response.isSuccessful()) {
-            return mSeasonsManager.getSeasonsByShowId(showId);
+            List<Season> seasons = mSeasonsManager.getSeasonsByShowId(showId);
+            return seasons.isEmpty() ? null : seasons;
         }
         List<Season> seasons = response.body();
         for (Season season : seasons) {
@@ -148,8 +155,9 @@ public class ShowsService implements IShowsService {
         }
         Response<List<Season>> imagesResponse = mTraktClient
                 .execute(showsApi.getSeasons(showId, ExtendedParameter.IMAGES));
-        if(imagesResponse == null || !imagesResponse.isSuccessful()) {
-            return mSeasonsManager.getSeasonsByShowId(showId);
+        if (imagesResponse == null || !imagesResponse.isSuccessful()) {
+            seasons = mSeasonsManager.getSeasonsByShowId(showId);
+            return seasons.isEmpty() ? null : seasons;
         }
 
         List<Season> images = imagesResponse.body();
@@ -160,6 +168,38 @@ public class ShowsService implements IShowsService {
         }
 
         return seasons;
+    }
+
+    /**
+     * This method retrieves the episodes from a season of a show
+     *
+     * @param showId
+     *         Show Id
+     * @param seasonNumber
+     *         Season number
+     *
+     * @return List of episodes of the given show's season
+     */
+    @Override
+    public List<Episode> getEpisodes(int showId, int seasonNumber) {
+        IShowsApi showsApi = getShowsApi();
+        Response<List<Episode>> response = mTraktClient
+                .execute(showsApi.getEpisodes(showId, seasonNumber));
+        if (response == null || !response.isSuccessful()) {
+            List<Episode> episodes = mEpisodesManager
+                    .findByShowIdAndSeasonNumber(showId, seasonNumber);
+            return episodes.isEmpty() ? null : episodes;
+        }
+
+        List<Episode> episodes = response.body();
+        for (Episode episode : episodes) {
+            episode.setLocalId(episode.getIds().getTrakt());
+            episode.setShowId(showId);
+            episode.setSeason(seasonNumber);
+            mEpisodesManager.createOrUpdate(episode);
+        }
+
+        return episodes;
     }
 
     /**
