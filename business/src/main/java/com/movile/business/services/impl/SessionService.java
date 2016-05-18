@@ -20,6 +20,8 @@ import com.movile.communication.clients.trakt.model.GetTokenRequest;
 import com.movile.communication.clients.trakt.model.GetUserSettingsResponse;
 import com.movile.persistence.managers.api.IUsersManager;
 
+import org.apache.commons.lang3.Validate;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -90,6 +92,7 @@ public class SessionService implements ISessionService {
     @Override
     public synchronized GeneratedCode doAuthentication(
             final IAuthenticationResultCallback callback) throws IllegalArgumentException {
+        Validate.notNull(callback, "Callback is mandatory and cannot be null");
         final IAuthenticationApi authenticationApi = mTraktClient.getApi(IAuthenticationApi.class);
         GenerateCodeRequest request = new GenerateCodeRequest();
 
@@ -102,6 +105,24 @@ public class SessionService implements ISessionService {
         }
 
         GeneratedCode generatedCode = response.body();
+        processResponse(callback, authenticationApi, generatedCode);
+
+        return generatedCode;
+    }
+
+    /**
+     * This method processes the response
+     *
+     * @param callback
+     *         Process callback
+     * @param authenticationApi
+     *         Api
+     * @param generatedCode
+     *         Generated code
+     */
+    private void processResponse(final IAuthenticationResultCallback callback,
+                                 final IAuthenticationApi authenticationApi,
+                                 GeneratedCode generatedCode) {
 
         final long intervalMillis = generatedCode.getInterval() * 1000;
         final long limitMillis = generatedCode.getExpiresIn() * 1000;
@@ -122,7 +143,7 @@ public class SessionService implements ISessionService {
             public void run() {
                 Calendar now = Calendar.getInstance();
                 if (mStopAuthentication || now.getTimeInMillis() - start > limitMillis) {
-                    if(!mStopAuthentication) {
+                    if (!mStopAuthentication) {
                         Log.i(TAG_LOG, "Authentication process was canceled");
                         callback.onFailure();
                     }
@@ -154,8 +175,6 @@ public class SessionService implements ISessionService {
                 pollHandler.postDelayed(this, intervalMillis);
             }
         }, intervalMillis);
-
-        return generatedCode;
     }
 
     /**
@@ -191,9 +210,9 @@ public class SessionService implements ISessionService {
      */
     @Override
     public AccessToken getAccessToken() {
-        if(mCurrentToken == null) {
+        if (mCurrentToken == null) {
             User user = getCurrentSession();
-            if(user != null) {
+            if (user != null) {
                 mCurrentToken = user.getAccessToken();
             }
         }

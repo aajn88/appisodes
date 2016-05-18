@@ -29,6 +29,9 @@ dependencies {
 
     provided 'org.roboguice:roboblender:3.0.1'
 
+    testCompile 'org.easymock:easymock:3.4'
+    testCompile "org.robolectric:robolectric:3.0"
+
     compile project(":common")
     compile project(":persistence")
     compile project(":communication")
