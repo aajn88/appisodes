@@ -32,4 +32,5 @@ Thumbs.db
 build/
 
 # Secure files
-appisodes.properties
+#### The following line is avoided due to this test. In production enviroment should be included
+# appisodes.properties
